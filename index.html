@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Alien Pepe Perdido - Etapa 1</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="toolbar">
+            <h2>Herramientas</h2>
+            <div class="tools">
+                <button id="btn-alien" class="tool-btn active">👽 Alien (Inicio)</button>
+                <button id="btn-nave" class="tool-btn">🚀 Nave (Fin)</button>
+                <button id="btn-arbol" class="tool-btn">🌳 Árbol (Muro)</button>
+                <button id="btn-roja" class="tool-btn">🍒 Baya Roja</button>
+                <button id="btn-morada" class="tool-btn">🍇 Baya Morada</button>
+                <button id="btn-borrador" class="tool-btn">🧽 Borrador</button>
+            </div>
+
+            <h2>Algoritmo</h2>
+            <select id="algoritmo-select">
+                <option value="bfs">BFS (Amplitud)</option>
+                <option value="dfs">DFS (Profundidad)</option>
+                <option value="limitada">Profundidad Limitada</option>
+                <option value="iterativa">Profundidad Iterativa</option>
+            </select>
+
+            <div class="limite-container">
+                <label for="limite-input">Límite de saltos (L):</label>
+                <input type="number" id="limite-input" value="10" min="1">
+            </div>
+
+            <div class="actions">
+                <button id="btn-iniciar" class="action-btn start">▶️ Iniciar Búsqueda</button>
+                <button id="btn-limpiar-ruta" class="action-btn">🧹 Limpiar Ruta</button>
+                <button id="btn-reiniciar" class="action-btn danger">🗑️ Reiniciar Mapa</button>
+            </div>
+
+            <div class="stats">
+                <p>Nodos visitados: <span id="stat-nodos">0</span></p>
+                <p>Pasos del camino: <span id="stat-pasos">0</span></p>
+            </div>
+        </aside>
+
+        <main class="canvas-container">
+            <canvas id="lienzo" width="600" height="600"></canvas>
+        </main>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>

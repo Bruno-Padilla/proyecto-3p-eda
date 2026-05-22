@@ -1,0 +1,130 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+body {
+    background-color: #2b2b36;
+    color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    gap: 20px;
+    background-color: #1e1e26;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 250px;
+}
+
+h2 {
+    font-size: 14px;
+    color: #8fa1b3;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: -5px;
+}
+
+.tools {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 13px;
+    background-color: #3b3b4f;
+    color: white;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #4c4c66;
+}
+
+button.active {
+    background-color: #5ab1bb;
+    color: #121212;
+    font-weight: bold;
+}
+
+select, input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #4c4c66;
+    background-color: #2b2b36;
+    color: white;
+}
+
+.limite-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.limite-container input {
+    width: 60px;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.action-btn.start {
+    background-color: #a3be8c;
+    color: #121212;
+    font-weight: bold;
+}
+
+.action-btn.start:hover {
+    background-color: #8eab76;
+}
+
+.action-btn.danger {
+    background-color: #bf616a;
+}
+
+.action-btn.danger:hover {
+    background-color: #a54e56;
+}
+
+.stats {
+    background-color: #2b2b36;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    border: 1px solid #4c4c66;
+}
+
+.stats span {
+    font-weight: bold;
+    color: #ebcb8b;
+}
+
+canvas {
+    background-color: #a48665; /* Color "Café" de la tierra suelta del bosque [cite: 221] */
+    border: 2px solid #4c4c66;
+    border-radius: 5px;
+    cursor: crosshair;
+}
