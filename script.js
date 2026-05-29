@@ -66,28 +66,38 @@ function dibujarMapa() {
       ctx.strokeStyle = "#80664d";
       ctx.strokeRect(x, y, TAMANO_CELDA, TAMANO_CELDA);
 
-      // 2. Pintar la exploración del algoritmo (con los colores de comparación)
+      // 2. Pintar la exploración del algoritmo
       if (matrizExploracion[f][c] === "visitado") {
-        ctx.fillStyle = "rgba(0, 150, 255, 0.5)"; // Azul transparente
+        ctx.fillStyle = "rgba(0, 150, 255, 0.5)";
         ctx.fillRect(x, y, TAMANO_CELDA, TAMANO_CELDA);
+      } else if (matrizExploracion[f][c] === "visitado-bfs") {
+        ctx.fillStyle = "rgba(255, 165, 0, 0.3)";
+        ctx.fillRect(x, y, TAMANO_CELDA, TAMANO_CELDA);
+      } else if (matrizExploracion[f][c] === "visitado-astar") {
+        ctx.fillStyle = "rgba(255, 0, 255, 0.3)";
+        ctx.fillRect(x, y, TAMANO_CELDA, TAMANO_CELDA);
+      } else if (matrizExploracion[f][c] === "visitado-ambos") {
+        ctx.fillStyle = "rgba(255, 165, 0, 0.3)";
+        ctx.fillRect(x, y, TAMANO_CELDA / 2, TAMANO_CELDA);
+        ctx.fillStyle = "rgba(255, 0, 255, 0.3)";
+        ctx.fillRect(x + TAMANO_CELDA / 2, y, TAMANO_CELDA / 2, TAMANO_CELDA);
       } else if (matrizExploracion[f][c] === "camino") {
-        ctx.fillStyle = "rgba(255, 223, 0, 0.7)"; // Amarillo transparente
+        ctx.fillStyle = "rgba(255, 223, 0, 0.7)";
         ctx.fillRect(x, y, TAMANO_CELDA, TAMANO_CELDA);
       } else if (matrizExploracion[f][c] === "ruta-bfs") {
-        ctx.fillStyle = "rgba(255, 165, 0, 0.8)"; // Naranja (BFS)
+        ctx.fillStyle = "rgba(255, 165, 0, 0.8)";
         ctx.fillRect(x, y, TAMANO_CELDA, TAMANO_CELDA);
       } else if (matrizExploracion[f][c] === "ruta-astar") {
-        ctx.fillStyle = "rgba(255, 0, 255, 0.8)"; // Magenta (A*)
+        ctx.fillStyle = "rgba(255, 0, 255, 0.8)";
         ctx.fillRect(x, y, TAMANO_CELDA, TAMANO_CELDA);
       } else if (matrizExploracion[f][c] === "ruta-ambos") {
-        // Si ambos algoritmos pasan por la misma celda, dividimos el color en dos
         ctx.fillStyle = "rgba(255, 165, 0, 0.8)";
         ctx.fillRect(x, y, TAMANO_CELDA / 2, TAMANO_CELDA);
         ctx.fillStyle = "rgba(255, 0, 255, 0.8)";
         ctx.fillRect(x + TAMANO_CELDA / 2, y, TAMANO_CELDA / 2, TAMANO_CELDA);
       }
 
-      // 3. Pintar Alien y Nave (Inicio y Fin)
+      // 3. Pintar Alien y Nave
       if (f === inicio.f && c === inicio.c) {
         ctx.fillStyle = "#a3be8c";
         ctx.fillRect(x, y, TAMANO_CELDA, TAMANO_CELDA);
@@ -137,7 +147,6 @@ canvas.addEventListener("mousedown", (e) => {
 canvas.addEventListener("mousemove", (e) => {
   if (!estaDibujando) return;
   if (herramientaActual === "alien" || herramientaActual === "nave") return;
-
   const rect = canvas.getBoundingClientRect();
   const c = Math.floor((e.clientX - rect.left) / TAMANO_CELDA);
   const f = Math.floor((e.clientY - rect.top) / TAMANO_CELDA);
@@ -393,7 +402,6 @@ async function ejecutarAStar() {
     [0, 1],
     [0, -1],
   ];
-
   let openSet = new MinHeap();
   let padres = Array.from({ length: FILAS }, () => Array(COLUMNAS).fill(null));
 
@@ -417,7 +425,6 @@ async function ejecutarAStar() {
     c: inicio.c,
     fScore: fScore[inicio.f][inicio.c],
   });
-
   let enOpenSet = Array.from({ length: FILAS }, () =>
     Array(COLUMNAS).fill(false),
   );
@@ -448,7 +455,6 @@ async function ejecutarAStar() {
     for (let [df, dc] of direcciones) {
       let nf = actual.f + df;
       let nc = actual.c + dc;
-
       if (nf >= 0 && nf < FILAS && nc >= 0 && nc < COLUMNAS) {
         if (mapa[nf][nc] !== 1) {
           let costoCelda = obtenerCostoTerreno(nf, nc);
@@ -480,14 +486,11 @@ async function reconstruirCamino(padres) {
 
   while (actual !== null && (actual.f !== inicio.f || actual.c !== inicio.c)) {
     if (!algoritmoCorriendo) return;
-
     matrizExploracion[actual.f][actual.c] = "camino";
     pasos++;
     document.getElementById("stat-pasos").innerText = pasos;
-
     dibujarMapa();
     await sleep(30);
-
     actual = padres[actual.f][actual.c];
   }
   algoritmoCorriendo = false;
@@ -500,19 +503,16 @@ async function reconstruirCaminoAStar(padres, gScore) {
 
   while (actual !== null && (actual.f !== inicio.f || actual.c !== inicio.c)) {
     if (!algoritmoCorriendo) return;
-
     matrizExploracion[actual.f][actual.c] = "camino";
     pasos++;
     document.getElementById("stat-pasos").innerText = pasos;
-
     dibujarMapa();
     await sleep(30);
-
     actual = padres[actual.f][actual.c];
   }
 
   alert(
-    `¡Camino encontrado!\nPasos dados: ${pasos}\nCosto de Energía Total (g): ${costoTotal}`,
+    `¡Camino encontrado!\nPasos dados: ${pasos}\nCosto de Energía Total: ${costoTotal}`,
   );
   algoritmoCorriendo = false;
 }
@@ -542,14 +542,20 @@ function buscarRutaSilenciosaBFS() {
   );
   visitados[inicio.f][inicio.c] = true;
 
-  let nodosExplorados = 0; // NUEVO: Contador de celdas evaluadas
+  let nodosExplorados = 0;
+  let ordenExploracion = [];
 
   while (cola.length > 0) {
     let actual = cola.shift();
-    nodosExplorados++; // Sumamos cada vez que procesamos una celda
+    nodosExplorados++;
+    ordenExploracion.push({ f: actual.f, c: actual.c });
 
     if (actual.f === fin.f && actual.c === fin.c) {
-      return { ruta: obtenerRutaLista(padres), explorados: nodosExplorados };
+      return {
+        ruta: obtenerRutaLista(padres),
+        explorados: nodosExplorados,
+        orden: ordenExploracion,
+      };
     }
 
     for (let [df, dc] of direcciones) {
@@ -591,15 +597,21 @@ function buscarRutaSilenciosaAStar() {
   );
   enOpenSet[inicio.f][inicio.c] = true;
 
-  let nodosExplorados = 0; // NUEVO: Contador de celdas evaluadas
+  let nodosExplorados = 0;
+  let ordenExploracion = [];
 
   while (!openSet.isEmpty()) {
     let actual = openSet.pop();
     enOpenSet[actual.f][actual.c] = false;
-    nodosExplorados++; // Sumamos cada vez que procesamos una celda
+    nodosExplorados++;
+    ordenExploracion.push({ f: actual.f, c: actual.c });
 
     if (actual.f === fin.f && actual.c === fin.c) {
-      return { ruta: obtenerRutaLista(padres), explorados: nodosExplorados };
+      return {
+        ruta: obtenerRutaLista(padres),
+        explorados: nodosExplorados,
+        orden: ordenExploracion,
+      };
     }
 
     for (let [df, dc] of direcciones) {
@@ -629,6 +641,20 @@ function buscarRutaSilenciosaAStar() {
   return null;
 }
 
+// NUEVA FUNCIÓN: Cuenta el tipo de terreno que pisó la ruta ganadora
+function desglosarTerreno(ruta) {
+  let tierra = 0,
+    roja = 0,
+    morada = 0;
+  for (let p of ruta) {
+    const tipo = mapa[p.f][p.c];
+    if (tipo === 0) tierra++;
+    else if (tipo === 2) roja++;
+    else if (tipo === 3) morada++;
+  }
+  return `[🟫 Tierra: ${tierra}]  [🍒 Baya Roja: ${roja}]  [🍇 Baya Morada: ${morada}]`;
+}
+
 async function iniciarComparacion() {
   matrizExploracion = Array.from({ length: FILAS }, () =>
     Array(COLUMNAS).fill(null),
@@ -639,11 +665,49 @@ async function iniciarComparacion() {
   let resultadoAStar = buscarRutaSilenciosaAStar();
 
   if (!resultadoBFS || !resultadoAStar) {
-    alert("La nave es inalcanzable. Bloqueaste el camino.");
+    alert("La nave es inalcanzable. Bloqueaste el camino con muros.");
     algoritmoCorriendo = false;
     return;
   }
 
+  let ordenBFS = resultadoBFS.orden;
+  let ordenAStar = resultadoAStar.orden;
+
+  // Fase de Animación 1: Exploración
+  let maxExploracion = Math.max(ordenBFS.length, ordenAStar.length);
+  for (let i = 0; i < maxExploracion; i++) {
+    if (!algoritmoCorriendo) return;
+
+    if (i < ordenBFS.length) {
+      let p = ordenBFS[i];
+      if (p.f !== inicio.f || p.c !== inicio.c) {
+        if (matrizExploracion[p.f][p.c] === "visitado-astar")
+          matrizExploracion[p.f][p.c] = "visitado-ambos";
+        else if (matrizExploracion[p.f][p.c] !== "visitado-ambos")
+          matrizExploracion[p.f][p.c] = "visitado-bfs";
+      }
+    }
+
+    if (i < ordenAStar.length) {
+      let p = ordenAStar[i];
+      if (p.f !== inicio.f || p.c !== inicio.c) {
+        if (matrizExploracion[p.f][p.c] === "visitado-bfs")
+          matrizExploracion[p.f][p.c] = "visitado-ambos";
+        else if (matrizExploracion[p.f][p.c] !== "visitado-ambos")
+          matrizExploracion[p.f][p.c] = "visitado-astar";
+      }
+    }
+
+    if (i % 2 === 0) {
+      dibujarMapa();
+      await sleep(5);
+    }
+  }
+
+  dibujarMapa();
+  await sleep(500);
+
+  // Fase de Animación 2: Rutas finales
   let rutaBFS = resultadoBFS.ruta;
   let rutaAStar = resultadoAStar.ruta;
 
@@ -656,10 +720,12 @@ async function iniciarComparacion() {
     0,
   );
 
+  let desgloseBFS = desglosarTerreno(rutaBFS);
+  let desgloseAStar = desglosarTerreno(rutaAStar);
+
   let maxPasos = Math.max(rutaBFS.length, rutaAStar.length);
   for (let i = 0; i < maxPasos; i++) {
     if (!algoritmoCorriendo) return;
-
     if (i < rutaBFS.length) {
       let p = rutaBFS[i];
       matrizExploracion[p.f][p.c] =
@@ -674,23 +740,23 @@ async function iniciarComparacion() {
           ? "ruta-ambos"
           : "ruta-astar";
     }
-
     dibujarMapa();
     await sleep(30);
   }
 
-  // AHORA SÍ: Comparamos el rendimiento (nodos explorados) y el resultado (longitud y costo)
   alert(
     `🥊 COMPARACIÓN TERMINADA 🥊\n\n` +
-      `🟧 BFS (Ciego, ignora costos):\n` +
+      `🟧 BFS (Ignora la energía, busca la ruta más corta en bloques):\n` +
       `• Nodos evaluados (tiempo): ${resultadoBFS.explorados}\n` +
       `• Longitud del camino: ${rutaBFS.length} pasos\n` +
-      `• Costo de Energía: ${costoBFS}\n\n` +
-      `🟪 A* (Inteligente, con heurística):\n` +
+      `• Terreno cruzado: ${desgloseBFS}\n` +
+      `• Costo Final de Energía: ${costoBFS}\n\n` +
+      `🟪 A* (Inteligente, con heurística, cuida la energía):\n` +
       `• Nodos evaluados (tiempo): ${resultadoAStar.explorados}\n` +
       `• Longitud del camino: ${rutaAStar.length} pasos\n` +
-      `• Costo de Energía: ${costoAStar}\n\n` +
-      `Conclusión: A* evalúa muchísimas menos celdas y esquiva el terreno costoso.`,
+      `• Terreno cruzado: ${desgloseAStar}\n` +
+      `• Costo Final de Energía: ${costoAStar}\n\n`,
+      ` FORMULA:  ${}` 
   );
 
   algoritmoCorriendo = false;
@@ -708,22 +774,16 @@ document.getElementById("btn-iniciar").addEventListener("click", () => {
   const selector = document.getElementById("algoritmo-select").value;
   algoritmoCorriendo = true;
 
-  if (selector === "bfs") {
-    ejecutarBFS();
-  } else if (selector === "dfs") {
-    ejecutarDFS();
-  } else if (selector === "limitada") {
+  if (selector === "bfs") ejecutarBFS();
+  else if (selector === "dfs") ejecutarDFS();
+  else if (selector === "limitada") {
     let L = parseInt(document.getElementById("limite-input").value);
     if (isNaN(L) || L < 1) L = 10;
     ejecutarProfundidadLimitada(L, false);
-  } else if (selector === "iterativa") {
-    ejecutarProfundidadIterativa();
-  } else if (selector === "astar") {
-    ejecutarAStar();
-  }
+  } else if (selector === "iterativa") ejecutarProfundidadIterativa();
+  else if (selector === "astar") ejecutarAStar();
 });
 
-// Este es el disparador para el botón de comparación que te pedí agregar en el HTML
 const btnComparar = document.getElementById("btn-comparar");
 if (btnComparar) {
   btnComparar.addEventListener("click", () => {
