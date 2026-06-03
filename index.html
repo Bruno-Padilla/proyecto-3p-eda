@@ -16,6 +16,7 @@
                 <button id="btn-arbol" class="tool-btn">🌳 Árbol (Muro)</button>
                 <button id="btn-roja" class="tool-btn">🍒 Baya Roja</button>
                 <button id="btn-morada" class="tool-btn">🍇 Baya Morada</button>
+                <button id="btn-antena" class="tool-btn">📡 Antena (Nodo MST)</button>
                 <button id="btn-borrador" class="tool-btn">🧽 Borrador</button>
             </div>
 
@@ -25,6 +26,9 @@
                 <option value="dfs">DFS (Profundidad)</option>
                 <option value="limitada">Profundidad Limitada</option>
                 <option value="iterativa">Profundidad Iterativa</option>
+                <option value="astar">A* (Navegación Inteligente)</option>
+                <option value="kruskal">Kruskal (MST)</option>
+                <option value="prim">Prim (MST)</option>
             </select>
 
             <div class="limite-container">
@@ -41,6 +45,7 @@
             <div class="stats">
                 <p>Nodos visitados: <span id="stat-nodos">0</span></p>
                 <p>Pasos del camino: <span id="stat-pasos">0</span></p>
+                <p>Costo Total (Energía): <span id="stat-costo">0</span></p>
             </div>
         </aside>
 
